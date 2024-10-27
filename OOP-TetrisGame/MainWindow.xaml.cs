@@ -74,7 +74,7 @@ namespace OOP_TetrisGame
                     };
 
                     // Đặt vị trí cho Image trên Canvas
-                    Canvas.SetTop(imageControl, (r - 2) * cellSize);  // Vị trí top (trừ 2 vì 2 hàng đầu ẩn)
+                    Canvas.SetTop(imageControl, (r - 2) * cellSize + 10);  // Vị trí top (trừ 2 vì 2 hàng đầu ẩn)
                     Canvas.SetLeft(imageControl, c * cellSize);        // Vị trí left
 
                     GameCanvas.Children.Add(imageControl);            // Thêm Image vào Canvas
@@ -110,11 +110,21 @@ namespace OOP_TetrisGame
             }
         }
 
+        // Vẽ block kế tiếp
+        private void DrawNextBlock(BlockQueue blockQueue)
+        {
+            // Lấy block kế tiếp từ hàng đợi block
+            Block next = blockQueue.NextBlock;
+            // Đặt hình ảnh của block kế tiếp vào NextImage để hiển thị
+            NextImage.Source = blockImages[next.Id];
+        }
+
         // Vẽ toàn bộ trạng thái game
         private void Draw(GameState gameState)
         {
             DrawGrid(gameState.GameGrid); // Vẽ lưới game
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
+            DrawNextBlock(gameState.BlockQueue); //// Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
         }
 
         // Chứa vòng lặp chính của game
@@ -135,6 +145,8 @@ namespace OOP_TetrisGame
                 // Vẽ lại trạng thái game sau khi block di chuyển
                 Draw(gameState);
             }
+
+            GameOverMenu.Visibility = Visibility.Visible;
         }
 
         // Xử lý sự kiện khi người chơi nhấn phím
@@ -179,9 +191,14 @@ namespace OOP_TetrisGame
         }
 
         // Xử lý sự kiện khi người chơi nhấn nút chơi lại
-        private void PlayAgain_Click(object sender, RoutedEventArgs e)
+        private async void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
-
+            // Khởi tạo lại trạng thái của trò chơi khi bắt đầu ván mới
+            gameState = new GameState();
+            // Ẩn menu Game Over khỏi giao diện để chuẩn bị cho trò chơi mới
+            GameOverMenu.Visibility = Visibility.Hidden;
+            // Bắt đầu vòng lặp trò chơi mới
+            await GameLoop();
         }
     }
 }

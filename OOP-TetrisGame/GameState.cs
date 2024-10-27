@@ -11,11 +11,28 @@ namespace OOP_TetrisGame
         private Block currentBlock;
         public Block CurrentBlock
         {
+            // Trả về giá trị của block hiện tại
             get => currentBlock;
+
+            // Thiết lập giá trị cho block hiện tại
             private set
             {
                 currentBlock = value;
                 currentBlock.Reset(); // Reset block về vị trí ban đầu khi được gán
+
+                // Thực hiện điều chỉnh block trong lưới game
+                for (int i = 0; i < 2; i++)
+                {
+                    // Di chuyển block xuống 1 hàng
+                    currentBlock.Move(1, 0);
+
+                    // Kiểm tra nếu block không khớp với lưới
+                    if (!BlockFits())
+                    {
+                        // Nếu không khớp, di chuyển block lên lại 1 hàng để đảm bảo vị trí hợp lệ
+                        currentBlock.Move(-1, 0);
+                    }
+                }
             }
         }
 

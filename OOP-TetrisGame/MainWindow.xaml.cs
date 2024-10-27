@@ -83,5 +83,56 @@ namespace OOP_TetrisGame
             }
             return imageControls;
         }
+
+        // Vẽ lưới game
+        private void DrawGrid(GameGrid grid)
+        {
+            // Duyệt qua từng ô trong lưới game
+            for (int r = 0;r < grid.Rows;r++)
+            {
+                for(int c=0;c < grid.Columns; c++)
+                {
+                    // Lấy id của ô tại vị trí [r,c]
+                    int id = grid[r, c];
+                    // Gán hình ảnh tương ứng với id cho Image control
+                    imageControls[r,c].Source = tileImages[id];
+                }
+            }
+        }
+
+        // Vẽ block đang rơi
+        private void DrawBlock(Block block)
+        {
+            foreach (Position p in block.TilePositions())
+            {
+                // Gán hình ảnh tương ứng với id của block cho các ô của block
+                imageControls[p.Row, p.Column].Source = tileImages[block.Id];
+            }
+        }
+
+        // Vẽ toàn bộ trạng thái game
+        private void Draw(GameState gameState)
+        {
+            DrawGrid(gameState.GameGrid); // Vẽ lưới game
+            DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
+        }
+
+        // Xử lý sự kiện khi người chơi nhấn phím
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        // Xử lý sự kiện khi GameCanvas được load
+        private void GameCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            Draw(gameState);
+        }
+
+        // Xử lý sự kiện khi người chơi nhấn nút chơi lại
+        private void PlayAgain_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

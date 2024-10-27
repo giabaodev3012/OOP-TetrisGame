@@ -117,16 +117,65 @@ namespace OOP_TetrisGame
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
         }
 
+        // Chứa vòng lặp chính của game
+        private async Task GameLoop()
+        {
+            // Vẽ trạng thái ban đầu của game
+            Draw(gameState);
+
+            // Vòng lặp chính - chạy liên tục cho đến khi game kết thúc
+            while (!gameState.GameOver)
+            {
+                // Tạm dừng 500ms (0.5 giây) trước mỗi lần di chuyển block xuống
+                await Task.Delay(500);
+
+                // Tự động di chuyển block xuống một đơn vị
+                gameState.MoveBlockDown();
+
+                // Vẽ lại trạng thái game sau khi block di chuyển
+                Draw(gameState);
+            }
+        }
+
         // Xử lý sự kiện khi người chơi nhấn phím
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            // Kiểm tra nếu game đã kết thúc thì không xử lý phím nữa
+            if (gameState.GameOver)
+            {
+                return;
+            }
 
+            // Sử dụng switch để xử lý các phím khác nhau
+            switch (e.Key)
+            {
+                case Key.Left:
+                    gameState.MoveBlockLeft();
+                    break;
+                case Key.Right:
+                    gameState.MoveBlockRight();
+                    break;
+                case Key.Down:
+                    gameState.MoveBlockDown();
+                    break;
+                case Key.Up:
+                    gameState.RotateBlockCW();
+                    break;
+                case Key.Z:
+                    gameState.RotateBlockCCW();
+                    break;
+                default:
+                    return;
+            }
+
+            Draw(gameState);
         }
 
         // Xử lý sự kiện khi GameCanvas được load
-        private void GameCanvas_Loaded(object sender, RoutedEventArgs e)
+        private async void GameCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            Draw(gameState);
+            // Bắt đầu vòng lặp game khi giao diện được load
+            await GameLoop();
         }
 
         // Xử lý sự kiện khi người chơi nhấn nút chơi lại

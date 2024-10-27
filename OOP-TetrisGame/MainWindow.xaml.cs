@@ -135,6 +135,8 @@ namespace OOP_TetrisGame
                 // Vẽ lại trạng thái game sau khi block di chuyển
                 Draw(gameState);
             }
+
+            GameOverMenu.Visibility = Visibility.Visible;
         }
 
         // Xử lý sự kiện khi người chơi nhấn phím
@@ -179,9 +181,14 @@ namespace OOP_TetrisGame
         }
 
         // Xử lý sự kiện khi người chơi nhấn nút chơi lại
-        private void PlayAgain_Click(object sender, RoutedEventArgs e)
+        private async void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
-
+            // Khởi tạo lại trạng thái của trò chơi khi bắt đầu ván mới
+            gameState = new GameState();
+            // Ẩn menu Game Over khỏi giao diện để chuẩn bị cho trò chơi mới
+            GameOverMenu.Visibility = Visibility.Hidden;
+            // Bắt đầu vòng lặp trò chơi mới
+            await GameLoop();
         }
     }
 }

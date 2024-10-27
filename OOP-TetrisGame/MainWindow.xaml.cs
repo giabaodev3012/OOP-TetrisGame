@@ -74,7 +74,7 @@ namespace OOP_TetrisGame
                     };
 
                     // Đặt vị trí cho Image trên Canvas
-                    Canvas.SetTop(imageControl, (r - 2) * cellSize);  // Vị trí top (trừ 2 vì 2 hàng đầu ẩn)
+                    Canvas.SetTop(imageControl, (r - 2) * cellSize + 10);  // Vị trí top (trừ 2 vì 2 hàng đầu ẩn)
                     Canvas.SetLeft(imageControl, c * cellSize);        // Vị trí left
 
                     GameCanvas.Children.Add(imageControl);            // Thêm Image vào Canvas
@@ -110,11 +110,21 @@ namespace OOP_TetrisGame
             }
         }
 
+        // Vẽ block kế tiếp
+        private void DrawNextBlock(BlockQueue blockQueue)
+        {
+            // Lấy block kế tiếp từ hàng đợi block
+            Block next = blockQueue.NextBlock;
+            // Đặt hình ảnh của block kế tiếp vào NextImage để hiển thị
+            NextImage.Source = blockImages[next.Id];
+        }
+
         // Vẽ toàn bộ trạng thái game
         private void Draw(GameState gameState)
         {
             DrawGrid(gameState.GameGrid); // Vẽ lưới game
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
+            DrawNextBlock(gameState.BlockQueue); //// Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
         }
 
         // Chứa vòng lặp chính của game

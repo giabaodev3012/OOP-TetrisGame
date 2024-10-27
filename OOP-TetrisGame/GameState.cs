@@ -22,7 +22,6 @@ namespace OOP_TetrisGame
 
                 // Thực hiện điều chỉnh block trong lưới game
                 for (int i = 0; i < 2; i++)
-                for (int i = 0; i < 2; i++)
                 {
                     // Di chuyển block xuống 1 hàng
                     currentBlock.Move(1, 0);

@@ -119,12 +119,29 @@ namespace OOP_TetrisGame
             NextImage.Source = blockImages[next.Id];
         }
 
+        // Vẽ block đang được giữ
+        private void DrawHeldBlock(Block heldBlock)
+        {
+            if (heldBlock == null)
+            {
+                // Nếu chưa có block được giữ, hiển thị hình ảnh trống
+                HoldImage.Source = blockImages[0];
+            }
+            else
+            {
+                // Nếu có block được giữ, hiển thị hình ảnh của block đó
+                HoldImage.Source = blockImages[heldBlock.Id];
+            }
+        }
+
         // Vẽ toàn bộ trạng thái game
         private void Draw(GameState gameState)
         {
             DrawGrid(gameState.GameGrid); // Vẽ lưới game
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
             DrawNextBlock(gameState.BlockQueue); //// Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
+            DrawHeldBlock(gameState.HeldBlock); // Vẽ block đang được giữ (nếu có)
+            ScoreText.Text = $"Score: {gameState.Score}"; // Cập nhật hiển thị điểm số của người chơi trên giao diện
         }
 
         // Chứa vòng lặp chính của game
@@ -146,7 +163,10 @@ namespace OOP_TetrisGame
                 Draw(gameState);
             }
 
+            // Hiển thị menu kết thúc game
             GameOverMenu.Visibility = Visibility.Visible;
+            // Hiển thị điểm số cuối cùng của người chơi trên menu kết thúc
+            FinalScoreText.Text = $"Score: {gameState.Score}";
         }
 
         // Xử lý sự kiện khi người chơi nhấn phím
@@ -175,6 +195,12 @@ namespace OOP_TetrisGame
                     break;
                 case Key.Z:
                     gameState.RotateBlockCCW();
+                    break;
+                case Key.C:
+                    gameState.HoldBlock();
+                    break;
+                case Key.Space:
+                    gameState.DropBlock();
                     break;
                 default:
                     return;

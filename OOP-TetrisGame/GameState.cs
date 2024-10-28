@@ -39,12 +39,16 @@ namespace OOP_TetrisGame
         public GameGrid GameGrid { get; } // Lưới game chính
         public BlockQueue BlockQueue { get; } // Hàng đợi chứa các block tiếp theo
         public bool GameOver { get; private set; } // Trạng thái kết thúc game
+        public int Score { get; private set; } //Đại diện cho điểm số của người chơi, được cập nhật mỗi khi người chơi xóa được hàng trong lưới
+        public Block HeldBlock { get; private set; } // Block mà người chơi đang giữ
+        public bool CanHold { get; private set; } // Kiểm tra xem người chơi có thể giữ block hay không
 
         public GameState()
         {
             GameGrid = new GameGrid(22, 10); // Tạo lưới game 22 hàng x 10 cột
             BlockQueue = new BlockQueue(); // Khởi tạo hàng đợi block
             currentBlock = BlockQueue.GetAndUpdate(); // Lấy block đầu tiên từ hàng đợi
+            CanHold = true;
         }
 
         //Kiểm tra block có phù hợp vị trí
@@ -61,6 +65,35 @@ namespace OOP_TetrisGame
                 }
             }
             return true; // Tất cả ô đều phù hợp
+        }
+
+        // Giữ block hiện tại
+        public void HoldBlock()
+        {
+            // Kiểm tra xem người chơi có thể giữ block hay không
+            if (!CanHold)
+            {
+                return; // Nếu không thể giữ, kết thúc phương thức
+            }
+
+            // Nếu chưa có block nào được giữ
+            if (HeldBlock == null)     
+            {
+                // Giữ block hiện tại
+                HeldBlock = CurrentBlock;
+
+                // Lấy block mới từ hàng đợi
+                CurrentBlock = BlockQueue.GetAndUpdate();
+            }
+            else
+            {
+                // Nếu đã có block được giữ, hoán đổi block hiện tại với block đang giữ
+                Block tmp = CurrentBlock; // Lưu trữ block hiện tại vào biến tạm
+                CurrentBlock = HeldBlock; // Đặt block đang giữ làm block hiện tại
+                HeldBlock = tmp; // Đặt block hiện tại vào block đang giữ
+            }
+
+            CanHold = false; // Đánh dấu là không thể giữ block cho đến khi block mới được đặt
         }
 
         // Xoay block
@@ -119,7 +152,7 @@ namespace OOP_TetrisGame
                 GameGrid[p.Row, p.Column] = CurrentBlock.Id;
             }
 
-            GameGrid.ClearFullRows();  // Xóa các hàng đã đầy
+            Score += GameGrid.ClearFullRows(); // Cộng điểm cho người chơi dựa trên số hàng đã được xóa
 
             if (IsGameOver())
             {
@@ -129,6 +162,7 @@ namespace OOP_TetrisGame
             {
                 // Lấy block mới từ hàng đợi nếu game chưa kết thúc
                 CurrentBlock = BlockQueue.GetAndUpdate();
+                CanHold = true;  
             }
         }
 
@@ -141,6 +175,44 @@ namespace OOP_TetrisGame
                 CurrentBlock.Move(-1, 0);  // Nếu không vừa thì quay lại
                 PlaceBlock();  // Đặt block vào lưới game vì đã chạm đáy
             }
+        }
+
+        // Tính khoảng cách tối đa mà một ô (tile) của block có thể rơi xuống
+        private int TileDropDistance(Position p)
+        {
+            int drop = 0;
+
+            // Kiểm tra từng hàng phía dưới ô (tile) cho đến khi gặp ô không trống
+            while (GameGrid.IsEmpty(p.Row + drop +1, p.Column))
+            {
+                drop ++;
+            }
+
+            return drop;
+        }
+
+        // Tính khoảng cách rơi tối đa mà toàn bộ block có thể rơi xuống
+        public int BlockDropDistance()
+        {
+            // Khởi tạo khoảng cách rơi ban đầu bằng số hàng của lưới game
+            int drop = GameGrid.Rows;
+
+            foreach (Position p in CurrentBlock.TilePositions())
+            {
+                // Cập nhật khoảng cách rơi tối đa cho toàn bộ block
+                drop = System.Math.Min(drop, TileDropDistance(p));
+            }
+
+            return drop;
+        }
+
+        // Thả block xuống khoảng cách rơi tối đa và đặt block vào lưới game
+        public void DropBlock()
+        {
+            // Di chuyển block xuống theo khoảng cách rơi tối đa
+            CurrentBlock.Move(BlockDropDistance(), 0);
+            // Đặt block vào lưới game sau khi thả xuống
+            PlaceBlock() ;
         }
 
     }

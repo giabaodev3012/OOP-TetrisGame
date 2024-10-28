@@ -44,6 +44,13 @@ namespace OOP_TetrisGame
 
         // Mảng 2 chiều lưu trữ các control Image để hiển thị trên giao diện
         private readonly Image[,] imageControls;
+        // Độ trễ tối đa giữa các lần di chuyển của block (tính bằng milliseconds)
+        private readonly int maxDelay = 1000;
+        // Độ trễ tối thiểu giữa các lần di chuyển của block
+        private readonly int minDelay = 75;
+        // Mức giảm của độ trễ khi người chơi đạt đến cấp độ mới
+        private readonly int delayDecrease = 25;
+
 
         // Đối tượng quản lý trạng thái game
         private GameState gameState = new GameState();
@@ -94,7 +101,10 @@ namespace OOP_TetrisGame
                 {
                     // Lấy id của ô tại vị trí [r,c]
                     int id = grid[r, c];
+                    // Đặt độ trong suốt của ô về mức 1 (không trong suốt)
+                    imageControls[r, c].Opacity = 1;
                     // Gán hình ảnh tương ứng với id cho Image control
+                    // Sử dụng mảng tileImages để tìm hình ảnh theo ID của ô
                     imageControls[r,c].Source = tileImages[id];
                 }
             }
@@ -105,6 +115,7 @@ namespace OOP_TetrisGame
         {
             foreach (Position p in block.TilePositions())
             {
+                imageControls[p.Row, p.Column].Opacity = 1;
                 // Gán hình ảnh tương ứng với id của block cho các ô của block
                 imageControls[p.Row, p.Column].Source = tileImages[block.Id];
             }
@@ -134,10 +145,26 @@ namespace OOP_TetrisGame
             }
         }
 
+        // Vẽ "ghost block" (block ảo) tại vị trí mà block hiện tại sẽ chạm đáy khi thả xuống
+        private void DrawGhostBlock(Block block)
+        {
+            // Tính khoảng cách rơi tối đa cho block hiện tại (khoảng cách "ghost")
+            int dropDistance = gameState.BlockDropDistance();
+
+            foreach (Position p in block.TilePositions())
+            {
+                // Cài đặt độ trong suốt cho ô ghost block để tạo hiệu ứng mờ
+                imageControls[p.Row + dropDistance, p.Column].Opacity = 0.25;
+                // Đặt hình ảnh của ô ghost block dựa vào Id của block
+                imageControls[p.Row + dropDistance, p.Column].Source = tileImages[block.Id];
+            }
+        }
+
         // Vẽ toàn bộ trạng thái game
         private void Draw(GameState gameState)
         {
             DrawGrid(gameState.GameGrid); // Vẽ lưới game
+            DrawGhostBlock(gameState.CurrentBlock); //// Vẽ "ghost block" để gợi ý vị trí của block khi rơi xuống hoàn toàn
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
             DrawNextBlock(gameState.BlockQueue); //// Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
             DrawHeldBlock(gameState.HeldBlock); // Vẽ block đang được giữ (nếu có)
@@ -153,8 +180,9 @@ namespace OOP_TetrisGame
             // Vòng lặp chính - chạy liên tục cho đến khi game kết thúc
             while (!gameState.GameOver)
             {
-                // Tạm dừng 500ms (0.5 giây) trước mỗi lần di chuyển block xuống
-                await Task.Delay(500);
+                int delay = Math.Max(minDelay, maxDelay - (gameState.Score * delayDecrease));
+                // Tạm dừng trước mỗi lần di chuyển block xuống
+                await Task.Delay(delay);
 
                 // Tự động di chuyển block xuống một đơn vị
                 gameState.MoveBlockDown();

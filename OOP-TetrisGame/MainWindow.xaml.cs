@@ -91,21 +91,24 @@ namespace OOP_TetrisGame
             return imageControls;
         }
 
+
+        // Vẽ lưới game
         // Vẽ lưới game
         private void DrawGrid(GameGrid grid)
         {
             // Duyệt qua từng ô trong lưới game
-            for (int r = 0;r < grid.Rows;r++)
+            for (int r = 0; r < grid.Rows; r++)
             {
-                for(int c=0;c < grid.Columns; c++)
+                for (int c = 0; c < grid.Columns; c++)
                 {
                     // Lấy id của ô tại vị trí [r,c]
                     int id = grid[r, c];
-                    // Đặt độ trong suốt của ô về mức 1 (không trong suốt)
-                    imageControls[r, c].Opacity = 1;
+
+                    // Các ô trống làm rất mờ, các ô có block giữ nguyên độ hiển thị
+                    imageControls[r, c].Opacity = (id == 0) ? 0.05 : 1;
+
                     // Gán hình ảnh tương ứng với id cho Image control
-                    // Sử dụng mảng tileImages để tìm hình ảnh theo ID của ô
-                    imageControls[r,c].Source = tileImages[id];
+                    imageControls[r, c].Source = tileImages[id];
                 }
             }
         }
@@ -154,7 +157,7 @@ namespace OOP_TetrisGame
             foreach (Position p in block.TilePositions())
             {
                 // Cài đặt độ trong suốt cho ô ghost block để tạo hiệu ứng mờ
-                imageControls[p.Row + dropDistance, p.Column].Opacity = 0.25;
+                imageControls[p.Row + dropDistance, p.Column].Opacity = 0.5;
                 // Đặt hình ảnh của ô ghost block dựa vào Id của block
                 imageControls[p.Row + dropDistance, p.Column].Source = tileImages[block.Id];
             }

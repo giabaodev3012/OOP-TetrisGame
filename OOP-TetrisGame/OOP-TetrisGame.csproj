@@ -22,6 +22,8 @@
     <None Remove="Assets\Block-T.png" />
     <None Remove="Assets\Block-Z.png" />
     <None Remove="Assets\Icon.ico" />
+    <None Remove="Assets\Jersey10-Regular.ttf" />
+    <None Remove="Assets\menu.png" />
     <None Remove="Assets\TileBlue.png" />
     <None Remove="Assets\TileCyan.png" />
     <None Remove="Assets\TileEmpty.png" />
@@ -45,6 +47,8 @@
     <Resource Include="Assets\Block-T.png" />
     <Resource Include="Assets\Block-Z.png" />
     <Resource Include="Assets\Icon.ico" />
+    <Resource Include="Assets\Jersey10-Regular.ttf" />
+    <Resource Include="Assets\menu.png" />
     <Resource Include="Assets\TileBlue.png" />
     <Resource Include="Assets\TileCyan.png" />
     <Resource Include="Assets\TileEmpty.png" />

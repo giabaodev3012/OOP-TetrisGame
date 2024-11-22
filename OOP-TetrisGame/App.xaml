@@ -4,6 +4,21 @@
              xmlns:local="clr-namespace:OOP_TetrisGame"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- Định nghĩa FontFamily -->
+        <FontFamily x:Key="JerseyFont">pack://application:,,,/Assets/#Jersey 10</FontFamily>
+
+        <!-- Áp dụng cho các control khác -->
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource JerseyFont}" />
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="{StaticResource JerseyFont}" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource JerseyFont}" />
+        </Style>
     </Application.Resources>
+
 </Application>

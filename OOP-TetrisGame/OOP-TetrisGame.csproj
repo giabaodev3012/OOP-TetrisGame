@@ -11,8 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Background.jpg" />
-    <None Remove="Assets\Background.png" />
+    <None Remove="Assets\background.png" />
     <None Remove="Assets\Block-Empty.png" />
     <None Remove="Assets\Block-I.png" />
     <None Remove="Assets\Block-J.png" />
@@ -35,9 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Background.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Assets\background.png" />
     <Resource Include="Assets\Block-Empty.png" />
     <Resource Include="Assets\Block-I.png" />
     <Resource Include="Assets\Block-J.png" />

@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace OOP_TetrisGame
 {
@@ -52,15 +52,56 @@ namespace OOP_TetrisGame
         private GameState gameState = new GameState();
         private bool gameRunning = false;
 
+
+        // Add a MediaPlayer for background music
+        private MediaPlayer backgroundMusic;
+        private MediaPlayer gameStartMusic;
+        private MediaPlayer gameOverMusic;
+        private MediaPlayer moveSound;
+        private MediaPlayer dropSound;
+
         public MainWindow()
         {
             InitializeComponent(); // Khởi tạo các thành phần giao diện
             imageControls = SetupGameCanvas(gameState.GameGrid); // Thiết lập canvas game
 
+            // Setup background music
+            backgroundMusic = new MediaPlayer();
+            backgroundMusic.Open(new Uri("Assets/Sounds/Mainsound.mp3", UriKind.Relative));
+
+
+            backgroundMusic.Volume = 0.3; // Set volume between 0 and 1
+            backgroundMusic.MediaEnded += BackgroundMusic_MediaEnded; // Loop the music
+            backgroundMusic.Play(); // Start playing immediately
+
+            // Setup GameStart music
+            gameStartMusic = new MediaPlayer();
+            gameStartMusic.Open(new Uri("Assets/Sounds/GameStart.mp3", UriKind.Relative));
+            gameStartMusic.Volume = 0.6; // Set volume between 0 and 1
+
+            gameOverMusic = new MediaPlayer();
+            gameOverMusic.Open(new Uri("Assets/Sounds/GameOver.mp3", UriKind.Relative));
+            gameOverMusic.Volume = 0.7;
+
+            moveSound = new MediaPlayer();
+            moveSound.Open(new Uri("Assets/Sounds/Move.mp3", UriKind.Relative));
+            moveSound.Volume = 1;
+
+            dropSound = new MediaPlayer();
+            dropSound.Open(new Uri("Assets/Sounds/Drop.mp3", UriKind.Relative));
+            dropSound.Volume = 1;
+
             // Đảm bảo menu hiển thị và game interface ẩn khi khởi động
             MainMenu.Visibility = Visibility.Visible;
             GameInterface.Visibility = Visibility.Hidden;
             GameOverMenu.Visibility = Visibility.Hidden;
+        }
+
+        // Event handler to loop the music
+        private void BackgroundMusic_MediaEnded(object sender, EventArgs e)
+        {
+            backgroundMusic.Position = TimeSpan.Zero;
+            backgroundMusic.Play();
         }
 
         // Phương thức thiết lập giao diện game
@@ -190,11 +231,18 @@ namespace OOP_TetrisGame
 
             if (gameState.GameOver)
             {
+                // Stop the music when game is over
+                backgroundMusic.Stop();
+                gameOverMusic.Position = TimeSpan.Zero;
+                gameOverMusic.Play();
+
                 GameOverMenu.Visibility = Visibility.Visible;
                 FinalScoreText.Text = $"Score: {gameState.Score}";
                 gameRunning = false;
             }
         }
+
+        
 
         // Xử lý sự kiện khi người chơi nhấn phím
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -207,12 +255,18 @@ namespace OOP_TetrisGame
             {
                 case Key.Left:
                     gameState.MoveBlockLeft();
+                    moveSound.Position = TimeSpan.Zero; // Đặt lại vị trí âm thanh
+                    moveSound.Play();
                     break;
                 case Key.Right:
                     gameState.MoveBlockRight();
+                    moveSound.Position = TimeSpan.Zero;
+                    moveSound.Play();
                     break;
                 case Key.Down:
                     gameState.MoveBlockDown();
+                    moveSound.Position = TimeSpan.Zero;
+                    moveSound.Play();
                     break;
                 case Key.Up:
                     gameState.RotateBlockCW();
@@ -225,6 +279,8 @@ namespace OOP_TetrisGame
                     break;
                 case Key.Space:
                     gameState.DropBlock();
+                    dropSound.Position = TimeSpan.Zero;
+                    dropSound.Play();
                     break;
                 default:
                     return;
@@ -248,11 +304,17 @@ namespace OOP_TetrisGame
             gameState = new GameState();
             gameRunning = true;
             GameOverMenu.Visibility = Visibility.Hidden;
+
+            // Restart music
+            backgroundMusic.Stop();
+            backgroundMusic.Play();
+
             GameLoop();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
+            backgroundMusic.Stop();
             Application.Current.Shutdown();
         }
 
@@ -264,6 +326,12 @@ namespace OOP_TetrisGame
         private void ExitGame_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown(); // Shuts down the application
+        }
+
+        private void GameStartButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            gameStartMusic.Position = TimeSpan.Zero; // Đặt lại vị trí âm thanh
+            gameStartMusic.Play(); // Phát âm thanh gamestart
         }
 
     }

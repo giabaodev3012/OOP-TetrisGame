@@ -23,6 +23,11 @@
     <None Remove="Assets\Icon.ico" />
     <None Remove="Assets\Jersey10-Regular.ttf" />
     <None Remove="Assets\menu.png" />
+    <None Remove="Assets\Sounds\ClearLine.mp3" />
+    <None Remove="Assets\Sounds\Drop.mp3" />
+    <None Remove="Assets\Sounds\GameOver.mp3" />
+    <None Remove="Assets\Sounds\GameStart.mp3" />
+    <None Remove="Assets\Sounds\Move.mp3" />
     <None Remove="Assets\TileBlue.png" />
     <None Remove="Assets\TileCyan.png" />
     <None Remove="Assets\TileEmpty.png" />
@@ -46,6 +51,24 @@
     <Resource Include="Assets\Icon.ico" />
     <Resource Include="Assets\Jersey10-Regular.ttf" />
     <Resource Include="Assets\menu.png" />
+    <Content Include="Assets\Sounds\ClearLine.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Sounds\GameOver.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Sounds\GameStart.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Sounds\Mainsound.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Sounds\Move.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Sounds\Drop.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Assets\TileBlue.png" />
     <Resource Include="Assets\TileCyan.png" />
     <Resource Include="Assets\TileEmpty.png" />

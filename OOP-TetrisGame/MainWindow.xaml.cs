@@ -260,5 +260,11 @@ namespace OOP_TetrisGame
         {
             // No need to start game loop here anymore since it starts from StartGame_Click
         }
+
+        private void ExitGame_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown(); // Shuts down the application
+        }
+
     }
 }

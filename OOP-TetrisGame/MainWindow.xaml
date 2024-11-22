@@ -13,7 +13,7 @@
     <Grid>
         <!-- Background của cửa sổ game -->
         <Grid.Background>
-            <ImageBrush x:Name="GameBackground" ImageSource="Assets/Background.jpg"/>
+            <ImageBrush x:Name="GameBackground" ImageSource="Assets/background.png"/>
         </Grid.Background>
 
         <!-- Main Menu với background riêng -->
@@ -92,13 +92,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- Score Text -->
             <TextBlock x:Name="ScoreText" Grid.Row="0" Grid.Column="1" 
-                       Text="Score: " Margin="0,30,0,10" TextAlignment="Center"/>
+           Text="Score: " Margin="0,5,0,15" TextAlignment="Center"/>
 
-            <Viewbox Grid.Row="1" Grid.Column="1" Margin="0,0,0,20">
+            <!-- Game Canvas Viewbox -->
+            <Viewbox Grid.Row="1" Grid.Column="1" Margin="0,-5,0,40">
                 <Border BorderBrush="White" BorderThickness="2" CornerRadius="10" Background="Transparent">
                     <Canvas x:Name="GameCanvas" Width="250" Height="510" 
-                            ClipToBounds="True" Loaded="GameCanvas_Loaded" Background="Transparent"/>
+                ClipToBounds="True" Loaded="GameCanvas_Loaded" Background="Transparent"/>
                 </Border>
             </Viewbox>
 
@@ -123,13 +125,20 @@
 
         <!-- Game Over Menu -->
         <Grid x:Name="GameOverMenu" Background="#CC000000" 
-              Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Hidden">
+      Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Hidden">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Game Over" FontSize="48" TextAlignment="Center"/>
                 <TextBlock x:Name="FinalScoreText" Text="Score: " FontSize="36" TextAlignment="Center"/>
-                <Button Content="Play Again" Background="LightPink" 
-                        Margin="0,20,0,0" Padding="5" Click="PlayAgain_Click"/>
+
+                <!-- Play Again Button -->
+                <Button Content="Play Again" Background="LightBlue" 
+                Margin="0,20,0,0" Padding="5" Click="PlayAgain_Click"/>
+
+                <!-- New Exit Button -->
+                <Button Content="Exit" Background="LightCoral" 
+                Margin="0,20,0,0" Padding="5" Click="ExitGame_Click"/>
             </StackPanel>
         </Grid>
+
     </Grid>
 </Window>

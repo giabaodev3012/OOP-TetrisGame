@@ -1,13 +1,10 @@
-﻿using System.Text;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace OOP_TetrisGame
 {
@@ -51,13 +48,19 @@ namespace OOP_TetrisGame
         // Mức giảm của độ trễ khi người chơi đạt đến cấp độ mới
         private readonly int delayDecrease = 25;
 
-
         // Đối tượng quản lý trạng thái game
         private GameState gameState = new GameState();
+        private bool gameRunning = false;
+
         public MainWindow()
         {
             InitializeComponent(); // Khởi tạo các thành phần giao diện
             imageControls = SetupGameCanvas(gameState.GameGrid); // Thiết lập canvas game
+
+            // Đảm bảo menu hiển thị và game interface ẩn khi khởi động
+            MainMenu.Visibility = Visibility.Visible;
+            GameInterface.Visibility = Visibility.Hidden;
+            GameOverMenu.Visibility = Visibility.Hidden;
         }
 
         // Phương thức thiết lập giao diện game
@@ -91,8 +94,6 @@ namespace OOP_TetrisGame
             return imageControls;
         }
 
-
-        // Vẽ lưới game
         // Vẽ lưới game
         private void DrawGrid(GameGrid grid)
         {
@@ -157,7 +158,7 @@ namespace OOP_TetrisGame
             foreach (Position p in block.TilePositions())
             {
                 // Cài đặt độ trong suốt cho ô ghost block để tạo hiệu ứng mờ
-                imageControls[p.Row + dropDistance, p.Column].Opacity = 0.5;
+                imageControls[p.Row + dropDistance, p.Column].Opacity = 0.25;
                 // Đặt hình ảnh của ô ghost block dựa vào Id của block
                 imageControls[p.Row + dropDistance, p.Column].Source = tileImages[block.Id];
             }
@@ -167,9 +168,9 @@ namespace OOP_TetrisGame
         private void Draw(GameState gameState)
         {
             DrawGrid(gameState.GameGrid); // Vẽ lưới game
-            DrawGhostBlock(gameState.CurrentBlock); //// Vẽ "ghost block" để gợi ý vị trí của block khi rơi xuống hoàn toàn
+            DrawGhostBlock(gameState.CurrentBlock); // Vẽ "ghost block" để gợi ý vị trí của block khi rơi xuống hoàn toàn
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
-            DrawNextBlock(gameState.BlockQueue); //// Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
+            DrawNextBlock(gameState.BlockQueue); // Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
             DrawHeldBlock(gameState.HeldBlock); // Vẽ block đang được giữ (nếu có)
             ScoreText.Text = $"Score: {gameState.Score}"; // Cập nhật hiển thị điểm số của người chơi trên giao diện
         }
@@ -177,37 +178,29 @@ namespace OOP_TetrisGame
         // Chứa vòng lặp chính của game
         private async Task GameLoop()
         {
-            // Vẽ trạng thái ban đầu của game
             Draw(gameState);
-
-            // Vòng lặp chính - chạy liên tục cho đến khi game kết thúc
-            while (!gameState.GameOver)
+            while (!gameState.GameOver && gameRunning)
             {
                 int delay = Math.Max(minDelay, maxDelay - (gameState.Score * delayDecrease));
-                // Tạm dừng trước mỗi lần di chuyển block xuống
                 await Task.Delay(delay);
 
-                // Tự động di chuyển block xuống một đơn vị
                 gameState.MoveBlockDown();
-
-                // Vẽ lại trạng thái game sau khi block di chuyển
                 Draw(gameState);
             }
 
-            // Hiển thị menu kết thúc game
-            GameOverMenu.Visibility = Visibility.Visible;
-            // Hiển thị điểm số cuối cùng của người chơi trên menu kết thúc
-            FinalScoreText.Text = $"Score: {gameState.Score}";
+            if (gameState.GameOver)
+            {
+                GameOverMenu.Visibility = Visibility.Visible;
+                FinalScoreText.Text = $"Score: {gameState.Score}";
+                gameRunning = false;
+            }
         }
 
         // Xử lý sự kiện khi người chơi nhấn phím
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            // Kiểm tra nếu game đã kết thúc thì không xử lý phím nữa
-            if (gameState.GameOver)
-            {
+            if (!gameRunning || gameState.GameOver)
                 return;
-            }
 
             // Sử dụng switch để xử lý các phím khác nhau
             switch (e.Key)
@@ -240,22 +233,32 @@ namespace OOP_TetrisGame
             Draw(gameState);
         }
 
-        // Xử lý sự kiện khi GameCanvas được load
-        private async void GameCanvas_Loaded(object sender, RoutedEventArgs e)
+        private void StartGame_Click(object sender, RoutedEventArgs e)
         {
-            // Bắt đầu vòng lặp game khi giao diện được load
-            await GameLoop();
+            gameState = new GameState();
+            gameRunning = true;
+            MainMenu.Visibility = Visibility.Hidden;
+            GameInterface.Visibility = Visibility.Visible;
+            GameOverMenu.Visibility = Visibility.Hidden;
+            GameLoop();
         }
 
-        // Xử lý sự kiện khi người chơi nhấn nút chơi lại
-        private async void PlayAgain_Click(object sender, RoutedEventArgs e)
+        private void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
-            // Khởi tạo lại trạng thái của trò chơi khi bắt đầu ván mới
             gameState = new GameState();
-            // Ẩn menu Game Over khỏi giao diện để chuẩn bị cho trò chơi mới
+            gameRunning = true;
             GameOverMenu.Visibility = Visibility.Hidden;
-            // Bắt đầu vòng lặp trò chơi mới
-            await GameLoop();
+            GameLoop();
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void GameCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            // No need to start game loop here anymore since it starts from StartGame_Click
         }
     }
 }

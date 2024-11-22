@@ -5,53 +5,130 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OOP_TetrisGame"
         mc:Ignorable="d"
-        Title="TetrisGame" Height="600" Width="800"
+        Title="TetrisGame" Height="600" Width="900"
         MinWidth="600" MinHeight="600"
         Foreground="White"
-        FontFamily="Segoe UI Light" FontSize="28"
+        FontFamily="Segoe UI Light" FontSize="30"
         KeyDown="Window_KeyDown">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
+        <!-- Background của cửa sổ game -->
         <Grid.Background>
-            <ImageBrush ImageSource="Assets/Background.jpg"/>
+            <ImageBrush x:Name="GameBackground" ImageSource="Assets/Background.jpg"/>
         </Grid.Background>
 
-        <Viewbox Grid.Row="1" Grid.Column="1" Margin="0,0,0,20">
-            <Border BorderBrush="White" BorderThickness="2" CornerRadius="10" Background="Transparent">
-                <Canvas x:Name="GameCanvas" Width="250" Height="510" ClipToBounds="True" Loaded="GameCanvas_Loaded" Background="Transparent"/>
-            </Border>
-        </Viewbox>
+        <!-- Main Menu với background riêng -->
+        <Grid x:Name="MainMenu" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Visible">
+            <Grid.Background>
+                <ImageBrush ImageSource="Assets/menu.png"/>
+            </Grid.Background>
 
-        <TextBlock x:Name="ScoreText" Grid.Row="0" Grid.Column="1" Text="Score: " Margin="0,30,0,10" TextAlignment="Center"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Width" Value="300"/>
+                        <Setter Property="Height" Value="70"/>
+                        <Setter Property="Margin" Value="0,15"/>
+                        <Setter Property="FontSize" Value="38"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="White"
+                                    BorderThickness="2"
+                                    CornerRadius="10">
+                                        <ContentPresenter HorizontalAlignment="Center" 
+                                                VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#33FFFFFF"/>
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="#66FFFFFF"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </StackPanel.Resources>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0">
-            <TextBlock Text="Hold" TextAlignment="Center"/>
-            <Border BorderBrush="White" BorderThickness="2" Margin="20" CornerRadius="10" Background="Transparent">
-                <Image x:Name="HoldImage" Width="125"/>
-            </Border>
-        </StackPanel>
+                <!-- Title với hiệu ứng đổ bóng -->
+                <TextBlock Text="TETRIS GAME" 
+                 FontSize="95"
+                 FontWeight="Bold"
+                 TextAlignment="Center" 
+                 Margin="0,0,0,25">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Blue" 
+                                BlurRadius="10" 
+                                ShadowDepth="8"/>
+                    </TextBlock.Effect>
+                </TextBlock>
 
-        <StackPanel Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0">
-            <TextBlock Text="Next" TextAlignment="Center"/>
-            <Border BorderBrush="White" BorderThickness="2" Margin="20" CornerRadius="10" Background="Transparent">
-                <Image x:Name="NextImage" Width="125"/>
-            </Border>
-        </StackPanel>
+                <!-- Buttons với style mới -->
+                <Button Content="Start Game" Click="StartGame_Click"/>
+                <Button Content="Exit" Click="Exit_Click"/>
+            </StackPanel>
+        </Grid>
 
-        <Grid x:Name="GameOverMenu" Background="#CC000000" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Hidden">
+        <!-- Game Interface -->
+        <Grid x:Name="GameInterface" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="ScoreText" Grid.Row="0" Grid.Column="1" 
+                       Text="Score: " Margin="0,30,0,10" TextAlignment="Center"/>
+
+            <Viewbox Grid.Row="1" Grid.Column="1" Margin="0,0,0,20">
+                <Border BorderBrush="White" BorderThickness="2" CornerRadius="10" Background="Transparent">
+                    <Canvas x:Name="GameCanvas" Width="250" Height="510" 
+                            ClipToBounds="True" Loaded="GameCanvas_Loaded" Background="Transparent"/>
+                </Border>
+            </Viewbox>
+
+            <StackPanel Grid.Row="1" Grid.Column="0" 
+                        VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0">
+                <TextBlock Text="Hold" TextAlignment="Center"/>
+                <Border BorderBrush="White" BorderThickness="2" Margin="20" 
+                        CornerRadius="10" Background="Transparent">
+                    <Image x:Name="HoldImage" Width="125"/>
+                </Border>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="2" 
+                        VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0">
+                <TextBlock Text="Next" TextAlignment="Center"/>
+                <Border BorderBrush="White" BorderThickness="2" Margin="20" 
+                        CornerRadius="10" Background="Transparent">
+                    <Image x:Name="NextImage" Width="125"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Game Over Menu -->
+        <Grid x:Name="GameOverMenu" Background="#CC000000" 
+              Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Hidden">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Game Over" FontSize="48" TextAlignment="Center"/>
                 <TextBlock x:Name="FinalScoreText" Text="Score: " FontSize="36" TextAlignment="Center"/>
-                <Button Content="Play Again" Background="LightPink" Margin="0,20,0,0" Padding="5" Click="PlayAgain_Click"/>
+                <Button Content="Play Again" Background="LightPink" 
+                        Margin="0,20,0,0" Padding="5" Click="PlayAgain_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

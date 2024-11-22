@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace OOP_TetrisGame
 {
     public class GameGrid
     {
         private readonly int[,] grid;
+        private MediaPlayer clearLineSound;
 
         //Properties: chỉ ra số hàng số cột của lưới
         public int Rows { get; } //truy xuất giá trị, chỉ đọc
@@ -28,6 +31,17 @@ namespace OOP_TetrisGame
             Rows = rows;
             Columns = columns;
             grid = new int[rows, columns];
+
+            // Tải âm thanh khi xóa hàng
+            clearLineSound = new MediaPlayer();
+            clearLineSound.Open(new Uri("Assets/Sounds/ClearLine.mp3", UriKind.Relative));
+            clearLineSound.Volume = 1;
+        }
+
+        public void PlayClearLineSound()
+        {
+            clearLineSound.Stop();  // Dừng âm thanh nếu đang phát
+            clearLineSound.Play();  // Phát lại âm thanh
         }
 
         //Kiểm tra tọa độ có nằm trong lưới không
@@ -99,6 +113,9 @@ namespace OOP_TetrisGame
                 {
                     ClearRow(r);
                     cleared++;
+
+                    // Phát âm thanh khi xóa một dòng
+                    PlayClearLineSound();
                 }
                 else if (cleared > 0)
                 {

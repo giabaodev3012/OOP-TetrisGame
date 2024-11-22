@@ -10,6 +10,7 @@
         Foreground="White"
         FontFamily="Segoe UI Light" FontSize="30"
         KeyDown="Window_KeyDown">
+    
     <Grid>
         <!-- Background của cửa sổ game -->
         <Grid.Background>
@@ -75,8 +76,8 @@
                 </TextBlock>
 
                 <!-- Buttons với style mới -->
-                <Button Content="Start Game" Click="StartGame_Click"/>
-                <Button Content="Exit" Click="Exit_Click"/>
+                <Button x:Name="StartGame" Content="Start Game" Click="StartGame_Click" MouseEnter="GameStartButton_MouseEnter"/>
+                <Button x:Name="ExitGame" Content="Exit Game" Click="Exit_Click" MouseEnter="GameStartButton_MouseEnter"/>
             </StackPanel>
         </Grid>
 

@@ -24,6 +24,7 @@
     <None Remove="Assets\Jersey10-Regular.ttf" />
     <None Remove="Assets\menu.png" />
     <None Remove="Assets\Sounds\ClearLine.mp3" />
+    <None Remove="Assets\Sounds\CountDown.mp3" />
     <None Remove="Assets\Sounds\Drop.mp3" />
     <None Remove="Assets\Sounds\GameOver.mp3" />
     <None Remove="Assets\Sounds\GameStart.mp3" />
@@ -52,6 +53,9 @@
     <Resource Include="Assets\Jersey10-Regular.ttf" />
     <Resource Include="Assets\menu.png" />
     <Content Include="Assets\Sounds\ClearLine.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Sounds\CountDown.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Sounds\GameOver.mp3">

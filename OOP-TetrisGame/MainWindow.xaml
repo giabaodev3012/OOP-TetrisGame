@@ -10,7 +10,7 @@
         Foreground="White"
         FontFamily="Segoe UI Light" FontSize="30"
         KeyDown="Window_KeyDown">
-    
+
     <Grid>
         <!-- Background của cửa sổ game -->
         <Grid.Background>
@@ -138,6 +138,24 @@
                 <!-- New Exit Button -->
                 <Button Content="Exit" Background="LightCoral" 
                 Margin="0,20,0,0" Padding="5" Click="ExitGame_Click"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Countdown Overlay -->
+        <Grid x:Name="CountdownOverlay" Grid.RowSpan="2" Grid.ColumnSpan="3" 
+  Background="#CC000000" Visibility="Hidden">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="CountdownText" 
+               Text="3" 
+               FontSize="150"
+               FontWeight="Bold"
+               TextAlignment="Center">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White" 
+                            BlurRadius="8" 
+                            ShadowDepth="0"/>
+                    </TextBlock.Effect>
+                </TextBlock>
             </StackPanel>
         </Grid>
 

@@ -59,6 +59,10 @@ namespace OOP_TetrisGame
         private MediaPlayer gameOverMusic;
         private MediaPlayer moveSound;
         private MediaPlayer dropSound;
+        private MediaPlayer countdownSound;
+        private const int COUNTDOWN_INTERVAL = 800; // 0.8 giây cho mỗi số
+        private const int START_DISPLAY_TIME = 1600; // 1.6 giây cho chữ "START!"
+
 
         public MainWindow()
         {
@@ -90,6 +94,12 @@ namespace OOP_TetrisGame
             dropSound = new MediaPlayer();
             dropSound.Open(new Uri("Assets/Sounds/Drop.mp3", UriKind.Relative));
             dropSound.Volume = 1;
+
+            countdownSound = new MediaPlayer();
+            countdownSound.Open(new Uri("Assets/Sounds/CountDown.mp3", UriKind.Relative));
+            countdownSound.Volume = 0.7;
+
+
 
             // Đảm bảo menu hiển thị và game interface ẩn khi khởi động
             MainMenu.Visibility = Visibility.Visible;
@@ -289,26 +299,63 @@ namespace OOP_TetrisGame
             Draw(gameState);
         }
 
-        private void StartGame_Click(object sender, RoutedEventArgs e)
+        private async void StartGame_Click(object sender, RoutedEventArgs e)
         {
-            gameState = new GameState();
-            gameRunning = true;
             MainMenu.Visibility = Visibility.Hidden;
             GameInterface.Visibility = Visibility.Visible;
+            CountdownOverlay.Visibility = Visibility.Visible;
+
+            // Bắt đầu phát nhạc countdown
+            countdownSound.Position = TimeSpan.Zero;
+            countdownSound.Play();
+
+            // Countdown sequence
+            for (int i = 3; i >= 1; i--)
+            {
+                CountdownText.Text = i.ToString();
+                await Task.Delay(COUNTDOWN_INTERVAL);
+            }
+
+            // Show "START!"
+            CountdownText.Text = "START!";
+            await Task.Delay(START_DISPLAY_TIME);
+
+            // Hide countdown and start game
+            CountdownOverlay.Visibility = Visibility.Hidden;
             GameOverMenu.Visibility = Visibility.Hidden;
+
+            gameState = new GameState();
+            gameRunning = true;
             GameLoop();
         }
 
-        private void PlayAgain_Click(object sender, RoutedEventArgs e)
+        private async void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
-            gameState = new GameState();
-            gameRunning = true;
+            CountdownOverlay.Visibility = Visibility.Visible;
+
+            // Bắt đầu phát nhạc countdown
+            countdownSound.Position = TimeSpan.Zero;
+            countdownSound.Play();
+
+            // Countdown sequence
+            for (int i = 3; i >= 1; i--)
+            {
+                CountdownText.Text = i.ToString();
+                await Task.Delay(COUNTDOWN_INTERVAL);
+            }
+
+            // Show "START!"
+            CountdownText.Text = "START!";
+            await Task.Delay(START_DISPLAY_TIME);
+
+            // Hide countdown and start game
+            CountdownOverlay.Visibility = Visibility.Hidden;
             GameOverMenu.Visibility = Visibility.Hidden;
 
-            // Restart music
+            gameState = new GameState();
+            gameRunning = true;
             backgroundMusic.Stop();
             backgroundMusic.Play();
-
             GameLoop();
         }
 

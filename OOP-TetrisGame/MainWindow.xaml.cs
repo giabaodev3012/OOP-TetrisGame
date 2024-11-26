@@ -29,7 +29,7 @@ namespace OOP_TetrisGame
         // Mảng lưu trữ hình ảnh cho các block
         private readonly ImageSource[] blockImages = new ImageSource[]
         {
-            new BitmapImage(new Uri("Assets/Block-Empty.png", UriKind.Relative)),
+            null,
             new BitmapImage(new Uri("Assets/Block-I.png", UriKind.Relative)),
             new BitmapImage(new Uri("Assets/Block-J.png", UriKind.Relative)),
             new BitmapImage(new Uri("Assets/Block-L.png", UriKind.Relative)),
@@ -190,8 +190,8 @@ namespace OOP_TetrisGame
         {
             if (heldBlock == null)
             {
-                // Nếu chưa có block được giữ, hiển thị hình ảnh trống
-                HoldImage.Source = blockImages[0];
+                // Nếu chưa có block được giữ, đặt nguồn hình ảnh thành null
+                HoldImage.Source = null;
             }
             else
             {
@@ -223,7 +223,8 @@ namespace OOP_TetrisGame
             DrawBlock(gameState.CurrentBlock); // Vẽ block đang rơi
             DrawNextBlock(gameState.BlockQueue); // Vẽ block kế tiếp từ hàng đợi block trong trạng thái game
             DrawHeldBlock(gameState.HeldBlock); // Vẽ block đang được giữ (nếu có)
-            ScoreText.Text = $"Score: {gameState.Score}"; // Cập nhật hiển thị điểm số của người chơi trên giao diện
+            ScoreText.Text = $"{gameState.Score}"; // Cập nhật hiển thị điểm số của người chơi trên giao diện
+            LinesText.Text = $"{gameState.LinesCleared}";
         }
 
         // Chứa vòng lặp chính của game
@@ -232,12 +233,18 @@ namespace OOP_TetrisGame
             Draw(gameState);
             while (!gameState.GameOver && gameRunning)
             {
-                int delay = Math.Max(minDelay, maxDelay - (gameState.Score * delayDecrease));
+                // Sử dụng phương thức GetDropInterval() từ GameState
+                int delay = (int)(gameState.GetDropInterval() * 1000);
                 await Task.Delay(delay);
 
                 gameState.MoveBlockDown();
                 Draw(gameState);
+
+                // Cập nhật hiển thị level
+                LevelText.Text = $"{gameState.Level}";
             }
+
+
 
             if (gameState.GameOver)
             {
@@ -361,12 +368,18 @@ namespace OOP_TetrisGame
             GameOverMenu.Visibility = Visibility.Hidden;
 
             gameState = new GameState();
+            gameState.LinesCleared = 0; // Reset số dòng khi bắt đầu game mới
             gameRunning = true;
 
             // Kiểm tra trạng thái âm thanh khi bắt đầu game
             if (isMusicEnabled)
             {
-                backgroundMusic.Stop();
+                // Chỉ phát lại nếu nhạc đã dừng hoàn toàn
+                if (backgroundMusic.Position == backgroundMusic.NaturalDuration)
+                {
+                    backgroundMusic.Position = TimeSpan.Zero;
+                }
+                // Không cần stop, chỉ đảm bảo nhạc đang chạy
                 backgroundMusic.Play();
             }
 
@@ -376,6 +389,7 @@ namespace OOP_TetrisGame
         private async void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
             CountdownOverlay.Visibility = Visibility.Visible;
+            GameOverMenu.Visibility = Visibility.Hidden;
 
             // Bắt đầu phát nhạc countdown (sử dụng PlaySound)
             PlaySound(countdownSound);
@@ -396,6 +410,7 @@ namespace OOP_TetrisGame
             GameOverMenu.Visibility = Visibility.Hidden;
 
             gameState = new GameState();
+            gameState.LinesCleared = 0;
             gameRunning = true;
 
             // Kiểm tra trạng thái âm thanh khi chơi lại

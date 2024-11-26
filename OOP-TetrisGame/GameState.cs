@@ -43,6 +43,9 @@ namespace OOP_TetrisGame
         public Block HeldBlock { get; private set; } // Block mà người chơi đang giữ
         public bool CanHold { get; private set; } // Kiểm tra xem người chơi có thể giữ block hay không
 
+        public int LinesCleared { get; set; } = 0;
+        public int Level { get; private set; } = 1;
+
         public GameState()
         {
             GameGrid = new GameGrid(22, 10); // Tạo lưới game 22 hàng x 10 cột
@@ -142,17 +145,35 @@ namespace OOP_TetrisGame
             return !(GameGrid.IsRowEmpty(0) && GameGrid.IsRowEmpty(1));
         }
 
+        // Phương thức cập nhật level
+        private void UpdateLevel()
+        {
+            // Tăng level dựa trên số dòng đã xóa
+            Level = 1 + (LinesCleared / 10);
+        }
+
         //Đặt block vào lưới game
         private void PlaceBlock()
         {
             foreach (Position p in CurrentBlock.TilePositions())
             {
                 // Đặt từng ô của block vào lưới game
-                // Mỗi ô được đánh dấu bằng Id của block
                 GameGrid[p.Row, p.Column] = CurrentBlock.Id;
             }
 
-            Score += GameGrid.ClearFullRows(); // Cộng điểm cho người chơi dựa trên số hàng đã được xóa
+            // Cập nhật số dòng đã xóa
+            int clearedLines = GameGrid.ClearFullRows();
+            LinesCleared += clearedLines;
+
+            // Cập nhật level
+            UpdateLevel();
+
+            // Tính điểm kết hợp: block và dòng
+            int blockPoints = CalculateBlockPoints(CurrentBlock);
+            int linePoints = CalculateLinePoints(clearedLines);
+
+            // Tổng điểm từ block và dòng
+            Score += blockPoints + linePoints;
 
             if (IsGameOver())
             {
@@ -162,8 +183,44 @@ namespace OOP_TetrisGame
             {
                 // Lấy block mới từ hàng đợi nếu game chưa kết thúc
                 CurrentBlock = BlockQueue.GetAndUpdate();
-                CanHold = true;  
+                CanHold = true;
             }
+        }
+
+        public double GetDropInterval()
+        {
+            // Công thức tính tốc độ rơi, level càng cao thì thời gian delay càng ngắn
+            return Math.Max(0.1, 1.0 - (Level - 1) * 0.1);
+        }
+
+        // Tính điểm theo loại block
+        private int CalculateBlockPoints(Block block)
+        {
+            // Điểm theo từng loại block
+            return block switch
+            {
+                IBlock => 10,     // I block (dài) được nhiều điểm nhất
+                JBlock => 8,
+                LBlock => 8,
+                OBlock => 6,      // O block (vuông) ít điểm hơn
+                SBlock => 7,
+                TBlock => 9,
+                ZBlock => 7,
+                _ => 5            // Trường hợp không xác định
+            };
+        }
+
+        // Tính điểm theo số dòng xóa
+        private int CalculateLinePoints(int clearedLines)
+        {
+            return clearedLines switch
+            {
+                1 => 40,   // Xóa 1 dòng
+                2 => 100,  // Xóa 2 dòng
+                3 => 300,  // Xóa 3 dòng
+                4 => 1200, // Xóa 4 dòng (Tetris)
+                _ => 0     // Không xóa dòng
+            };
         }
 
         // Di chuyển block xuống
@@ -214,6 +271,5 @@ namespace OOP_TetrisGame
             // Đặt block vào lưới game sau khi thả xuống
             PlaceBlock() ;
         }
-
     }
 }

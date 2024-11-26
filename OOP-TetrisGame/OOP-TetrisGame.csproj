@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <None Remove="Assets\background.png" />
-    <None Remove="Assets\Block-Empty.png" />
     <None Remove="Assets\Block-I.png" />
     <None Remove="Assets\Block-J.png" />
     <None Remove="Assets\Block-L.png" />
@@ -43,14 +42,27 @@
 
   <ItemGroup>
     <Resource Include="Assets\background.png" />
-    <Resource Include="Assets\Block-Empty.png" />
-    <Resource Include="Assets\Block-I.png" />
-    <Resource Include="Assets\Block-J.png" />
-    <Resource Include="Assets\Block-L.png" />
-    <Resource Include="Assets\Block-O.png" />
-    <Resource Include="Assets\Block-S.png" />
-    <Resource Include="Assets\Block-T.png" />
-    <Resource Include="Assets\Block-Z.png" />
+    <Resource Include="Assets\Block-I.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Block-J.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Block-L.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Block-O.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Block-S.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Block-T.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Block-Z.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icon.ico" />
     <Resource Include="Assets\Jersey10-Regular.ttf" />
     <Resource Include="Assets\menu.png" />

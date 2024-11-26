@@ -241,10 +241,13 @@ namespace OOP_TetrisGame
 
             if (gameState.GameOver)
             {
-                // Stop the music when game is over
-                backgroundMusic.Stop();
-                gameOverMusic.Position = TimeSpan.Zero;
-                gameOverMusic.Play();
+                // Kiểm tra trạng thái âm thanh khi game over
+                if (isMusicEnabled)
+                {
+                    backgroundMusic.Stop();
+                    gameOverMusic.Position = TimeSpan.Zero;
+                    gameOverMusic.Play();
+                }
 
                 GameOverMenu.Visibility = Visibility.Visible;
                 FinalScoreText.Text = $"Score: {gameState.Score}";
@@ -252,7 +255,46 @@ namespace OOP_TetrisGame
             }
         }
 
-        
+        // Thêm biến để theo dõi trạng thái âm thanh
+        private bool isMusicEnabled = true;
+
+        // Phương thức xử lý sự kiện khi nhấn nút toggle âm thanh
+        private void MusicToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Đảo ngược trạng thái âm thanh
+            isMusicEnabled = !isMusicEnabled;
+
+            if (isMusicEnabled)
+            {
+                // Bật lại tất cả các âm thanh
+                backgroundMusic.Play();
+                MusicToggleImage.Source = new BitmapImage(new Uri("Assets/MusicOn.png", UriKind.Relative));
+            }
+            else
+            {
+                // Tắt tất cả các âm thanh
+                backgroundMusic.Pause();
+                gameStartMusic.Pause();
+                gameOverMusic.Pause();
+                moveSound.Pause();
+                dropSound.Pause();
+                countdownSound.Pause();
+
+                MusicToggleImage.Source = new BitmapImage(new Uri("Assets/MusicOff.png", UriKind.Relative));
+            }
+        }
+
+        // Phương thức phát âm thanh có kiểm tra trạng thái
+        private void PlaySound(MediaPlayer player)
+        {
+            if (isMusicEnabled)
+            {
+                player.Position = TimeSpan.Zero;
+                player.Play();
+            }
+        }
+
+
 
         // Xử lý sự kiện khi người chơi nhấn phím
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -260,23 +302,19 @@ namespace OOP_TetrisGame
             if (!gameRunning || gameState.GameOver)
                 return;
 
-            // Sử dụng switch để xử lý các phím khác nhau
             switch (e.Key)
             {
                 case Key.Left:
                     gameState.MoveBlockLeft();
-                    moveSound.Position = TimeSpan.Zero; // Đặt lại vị trí âm thanh
-                    moveSound.Play();
+                    PlaySound(moveSound);
                     break;
                 case Key.Right:
                     gameState.MoveBlockRight();
-                    moveSound.Position = TimeSpan.Zero;
-                    moveSound.Play();
+                    PlaySound(moveSound);
                     break;
                 case Key.Down:
                     gameState.MoveBlockDown();
-                    moveSound.Position = TimeSpan.Zero;
-                    moveSound.Play();
+                    PlaySound(moveSound);
                     break;
                 case Key.Up:
                     gameState.RotateBlockCW();
@@ -289,8 +327,7 @@ namespace OOP_TetrisGame
                     break;
                 case Key.Space:
                     gameState.DropBlock();
-                    dropSound.Position = TimeSpan.Zero;
-                    dropSound.Play();
+                    PlaySound(dropSound);
                     break;
                 default:
                     return;
@@ -305,9 +342,8 @@ namespace OOP_TetrisGame
             GameInterface.Visibility = Visibility.Visible;
             CountdownOverlay.Visibility = Visibility.Visible;
 
-            // Bắt đầu phát nhạc countdown
-            countdownSound.Position = TimeSpan.Zero;
-            countdownSound.Play();
+            // Bắt đầu phát nhạc countdown (sử dụng PlaySound)
+            PlaySound(countdownSound);
 
             // Countdown sequence
             for (int i = 3; i >= 1; i--)
@@ -326,6 +362,14 @@ namespace OOP_TetrisGame
 
             gameState = new GameState();
             gameRunning = true;
+
+            // Kiểm tra trạng thái âm thanh khi bắt đầu game
+            if (isMusicEnabled)
+            {
+                backgroundMusic.Stop();
+                backgroundMusic.Play();
+            }
+
             GameLoop();
         }
 
@@ -333,9 +377,8 @@ namespace OOP_TetrisGame
         {
             CountdownOverlay.Visibility = Visibility.Visible;
 
-            // Bắt đầu phát nhạc countdown
-            countdownSound.Position = TimeSpan.Zero;
-            countdownSound.Play();
+            // Bắt đầu phát nhạc countdown (sử dụng PlaySound)
+            PlaySound(countdownSound);
 
             // Countdown sequence
             for (int i = 3; i >= 1; i--)
@@ -354,8 +397,14 @@ namespace OOP_TetrisGame
 
             gameState = new GameState();
             gameRunning = true;
-            backgroundMusic.Stop();
-            backgroundMusic.Play();
+
+            // Kiểm tra trạng thái âm thanh khi chơi lại
+            if (isMusicEnabled)
+            {
+                backgroundMusic.Stop();
+                backgroundMusic.Play();
+            }
+
             GameLoop();
         }
 
@@ -377,8 +426,8 @@ namespace OOP_TetrisGame
 
         private void GameStartButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            gameStartMusic.Position = TimeSpan.Zero; // Đặt lại vị trí âm thanh
-            gameStartMusic.Play(); // Phát âm thanh gamestart
+            // Kiểm tra trạng thái âm thanh
+            PlaySound(gameStartMusic);
         }
 
     }

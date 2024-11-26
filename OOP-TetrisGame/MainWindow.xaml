@@ -11,6 +11,40 @@
         FontFamily="Segoe UI Light" FontSize="30"
         KeyDown="Window_KeyDown">
 
+    <!-- Thêm vào Resources của Window hoặc App -->
+    <Window.Resources>
+        <Style x:Key="TransparentWhiteBorderButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+            <!-- Viền trắng 50% độ trong suốt -->
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                     BorderBrush="{TemplateBinding BorderBrush}"
+                     BorderThickness="{TemplateBinding BorderThickness}"
+                     CornerRadius="10">
+                            <!-- Bán kính bo tròng góc -->
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#20FFFFFF"/>
+                                <!-- Hiệu ứng hover -->
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#40FFFFFF"/>
+                                <!-- Hiệu ứng khi nhấn -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <!-- Background của cửa sổ game -->
         <Grid.Background>
@@ -122,7 +156,23 @@
                     <Image x:Name="NextImage" Width="125"/>
                 </Border>
             </StackPanel>
+
+            <Button x:Name="MusicToggleButton" 
+        Grid.Row="0" 
+        Grid.Column="0" 
+        Width="50" 
+        Height="50" 
+        HorizontalAlignment="Left" 
+        VerticalAlignment="Top" 
+        Margin="20,10,0,0" 
+        Click="MusicToggleButton_Click"
+        Style="{StaticResource TransparentWhiteBorderButton}">
+                <Image x:Name="MusicToggleImage" Source="Assets/MusicOn.png" Width="30" Height="30"/>
+            </Button>
+
         </Grid>
+
+
 
         <!-- Game Over Menu -->
         <Grid x:Name="GameOverMenu" Background="#CC000000" 

@@ -23,6 +23,8 @@
     <None Remove="Assets\Icon.ico" />
     <None Remove="Assets\Jersey10-Regular.ttf" />
     <None Remove="Assets\menu.png" />
+    <None Remove="Assets\MusicOff.png" />
+    <None Remove="Assets\MusicOn.png" />
     <None Remove="Assets\Sounds\ClearLine.mp3" />
     <None Remove="Assets\Sounds\CountDown.mp3" />
     <None Remove="Assets\Sounds\Drop.mp3" />
@@ -52,6 +54,9 @@
     <Resource Include="Assets\Icon.ico" />
     <Resource Include="Assets\Jersey10-Regular.ttf" />
     <Resource Include="Assets\menu.png" />
+    <Content Include="Assets\MusicOff.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Sounds\ClearLine.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -73,6 +78,9 @@
     <Content Include="Assets\Sounds\Drop.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\MusicOn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\TileBlue.png" />
     <Resource Include="Assets\TileCyan.png" />
     <Resource Include="Assets\TileEmpty.png" />
